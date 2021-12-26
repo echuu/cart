@@ -1,0 +1,295 @@
+[
+    {
+        "file": "C:/Users/ericc/cart/src/Interval.h",
+        "file_last_write": 1640497085.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Interval",
+                "kind": 3,
+                "parent_name": "",
+                "name": "Interval",
+                "file": "C:/Users/ericc/cart/src/Interval.h",
+                "line": 16,
+                "column": 8
+            },
+            {
+                "usr": "c:@S@Interval@F@print#",
+                "kind": 7,
+                "parent_name": "Interval",
+                "name": "print",
+                "file": "C:/Users/ericc/cart/src/Interval.h",
+                "line": 26,
+                "column": 14
+            },
+            {
+                "usr": "c:@F@support#$@N@arma@S@Mat>#d#i#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "support(arma::mat, u_int)",
+                "file": "C:/Users/ericc/cart/src/Interval.h",
+                "line": 32,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@dfs#*$@S@Node#&i#$@N@std@N@__1@S@vector>#*$@S@Interval#$@N@std@N@__1@S@allocator>#S4_#&$@N@arma@S@Mat>#d#S7_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "dfs(Node *, unsigned int &, std::vector<Interval *>, arma::mat &, arma::mat &)",
+                "file": "C:/Users/ericc/cart/src/Interval.h",
+                "line": 42,
+                "column": 6
+            }
+        ]
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/Node.h",
+        "file_last_write": 1640464175.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Node",
+                "kind": 2,
+                "parent_name": "",
+                "name": "Node",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 17,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@Node@F@calculateLeafValue#$@N@arma@S@Mat>#d#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "calculateLeafValue(arma::mat)",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 58,
+                "column": 16
+            },
+            {
+                "usr": "c:@S@Node@F@printNode#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "printNode",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 63,
+                "column": 14
+            },
+            {
+                "usr": "c:@S@Node@F@setSSE#d#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "setSSE(double)",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 73,
+                "column": 14
+            },
+            {
+                "usr": "c:@S@Node@F@getFeature#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "getFeature",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 78,
+                "column": 15
+            },
+            {
+                "usr": "c:@S@Node@F@getThreshold#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "getThreshold",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 81,
+                "column": 16
+            },
+            {
+                "usr": "c:@S@Node@F@getSSE#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "getSSE",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 84,
+                "column": 16
+            },
+            {
+                "usr": "c:@S@Node@F@getData#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "getData",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 87,
+                "column": 19
+            },
+            {
+                "usr": "c:@S@Node@F@getLeafVal#",
+                "kind": 7,
+                "parent_name": "Node",
+                "name": "getLeafVal",
+                "file": "C:/Users/ericc/cart/src/Node.h",
+                "line": 90,
+                "column": 16
+            }
+        ]
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/Tree.cpp",
+        "file_last_write": 1640390675.0,
+        "definitions": []
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/Tree.h",
+        "file_last_write": 1640498342.0,
+        "definitions": [
+            {
+                "usr": "c:@S@Tree",
+                "kind": 2,
+                "parent_name": "",
+                "name": "Tree",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 16,
+                "column": 7
+            },
+            {
+                "usr": "c:@S@Tree@F@buildTree#$@N@arma@S@Col>#i#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "buildTree(arma::uvec)",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 45,
+                "column": 15
+            },
+            {
+                "usr": "c:@S@Tree@F@calculateRuleSSE#$@N@arma@S@Col>#i#S0_#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "calculateRuleSSE(arma::uvec, arma::uvec)",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 178,
+                "column": 16
+            },
+            {
+                "usr": "c:@S@Tree@F@isSmallerValue#d#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "isSmallerValue(double)",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 204,
+                "column": 14
+            },
+            {
+                "usr": "c:@S@Tree@F@dfs#*$@S@Node#$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "dfs(Node *, std::string)",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 209,
+                "column": 14
+            },
+            {
+                "usr": "c:@S@Tree@F@printTree#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "printTree",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 222,
+                "column": 14
+            },
+            {
+                "usr": "c:@S@Tree@F@getLeaves#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "getLeaves",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 227,
+                "column": 13
+            },
+            {
+                "usr": "c:@S@Tree@F@getNumFeats#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "getNumFeats",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 230,
+                "column": 15
+            },
+            {
+                "usr": "c:@S@Tree@F@getNumRows#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "getNumRows",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 233,
+                "column": 15
+            }
+        ]
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/cart_types.h",
+        "file_last_write": 1640155900.0,
+        "definitions": [
+            {
+                "usr": "c:cart_types.h@T@u_int",
+                "kind": 8,
+                "parent_name": "",
+                "name": "u_int",
+                "file": "C:/Users/ericc/cart/src/cart_types.h",
+                "line": 4,
+                "column": 22
+            }
+        ]
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/test.cpp",
+        "file_last_write": 1640482197.0,
+        "definitions": [
+            {
+                "usr": "c:@F@test#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "test(arma::mat)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 11,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@createDefaultPartition#$@N@arma@S@Mat>#d#i#i#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "createDefaultPartition(arma::mat, u_int, u_int)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 46,
+                "column": 12
+            },
+            {
+                "usr": "c:@F@calculateRuleSSE#$@N@arma@S@Mat>#d#$@N@arma@S@Col>#i#S1_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "calculateRuleSSE(arma::mat, arma::uvec, arma::uvec)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 67,
+                "column": 8
+            },
+            {
+                "usr": "c:@F@testBuildTree#$@N@arma@S@Mat>#d#$@N@arma@S@Col>#i#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "testBuildTree(arma::mat, arma::uvec)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 94,
+                "column": 12
+            }
+        ]
+    },
+    {
+        "file": "C:/Users/ericc/cart/src/util.h",
+        "file_last_write": 1640373488.0,
+        "definitions": [
+            {
+                "usr": "c:@F@sse#$@N@arma@S@Col>#d#I#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sse(arma::vec, int, double)",
+                "file": "C:/Users/ericc/cart/src/util.h",
+                "line": 11,
+                "column": 8
+            }
+        ]
+    }
+]
