@@ -9,9 +9,8 @@
 struct Interval;
 arma::mat support(arma::mat samps, u_int D);
 void dfs(Node* node, unsigned int& k, std::vector<Interval*> intervalStack,
-    arma::mat& partition, arma::mat& supp);
-
-
+    arma::mat& partition, arma::mat& supp, 
+    std::unordered_map<u_int, arma::uvec>& leafRowMap);
 
 struct Interval {
     public:
@@ -40,7 +39,8 @@ arma::mat support(arma::mat samps, u_int D) {
 
 // recursive function to determine decision rules
 void dfs(Node* node, unsigned int& k, std::vector<Interval*> intervalStack,
-    arma::mat& partition, arma::mat& supp) {
+    arma::mat& partition, arma::mat& supp, 
+    std::unordered_map<u_int, arma::uvec>& leafRowMap) {
 
     /*  k:          current partition set that we are updating
         decisions:  stack that holdes Interval objects
@@ -62,11 +62,22 @@ void dfs(Node* node, unsigned int& k, std::vector<Interval*> intervalStack,
 
             // need to take max, min to accommodate for shrinking intervals,
             // further restrictions on the same feature as we go down the tree
-            partition(k, 2*col) = std::max(partition(k, 2*col), lb);
-            partition(k, 2*col+1) = std::min(partition(k, 2*col+1), ub);
+            // partition(k, 2*col) = std::max(partition(k, 2*col), lb);
+            // partition(k, 2*col+1) = std::min(partition(k, 2*col+1), ub);
+
+            partition(2*col, k) = std::max(partition(2*col, k), lb);
+            partition(2*col+1, k) = std::min(partition(2*col+1, k), ub);
         } // end of for() updating the k-th leaf
 
-        Rcpp::Rcout << "row " << k << " : leaf value = " << node->getLeafVal() << std::endl;
+        // add the rows corresponding to this leaf into the hashmap
+        // this is used in the hybrid algo to find candidate/representative 
+        // points in each partition (leaf) set
+        // NOTE: since we are doing this in the same order as storing the
+        // intervals (above), we ensure that the k-th partition set
+        // corresponds to the leafRows that we store in the map below
+        leafRowMap[k] = node->getLeafRows();
+
+        // Rcpp::Rcout << "row " << k << " : leaf value = " << node->getLeafVal() << std::endl;
         k++; // move to next leaf node / interval to update
         return;
     } // end of terminating condition
@@ -78,6 +89,10 @@ void dfs(Node* node, unsigned int& k, std::vector<Interval*> intervalStack,
     */ 
 
     // extract the rule for the curr node -> this will give left and ride nodes
+    // features are stored in the Node object as 1-index because the data 
+    // looks like [y|X], so features start from column 1 rather than column 0
+    // but when creating subsequent maps and matrices, we still want the 
+    // first feature to be in the 0-th (first) column (element in map)
     unsigned int feature = node->getFeature() - 1;
     double lb = supp(feature, 0);
     double ub = supp(feature, 1);
@@ -89,13 +104,13 @@ void dfs(Node* node, unsigned int& k, std::vector<Interval*> intervalStack,
 
     // travel down left node
     intervalStack.push_back(leftInterval);
-    dfs(node->left, k, intervalStack, partition, supp);
+    dfs(node->left, k, intervalStack, partition, supp, leafRowMap);
     delete intervalStack.back();
     intervalStack.pop_back();
 
     // travel down right node
     intervalStack.push_back(rightInterval);
-    dfs(node->right, k, intervalStack, partition, supp);
+    dfs(node->right, k, intervalStack, partition, supp, leafRowMap);
     delete intervalStack.back();
     intervalStack.pop_back();
 

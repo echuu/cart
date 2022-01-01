@@ -13,13 +13,62 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // test
-arma::mat test(arma::mat data);
-RcppExport SEXP _cart_test(SEXP dataSEXP) {
+arma::mat test(arma::mat data, int code);
+RcppExport SEXP _cart_test(SEXP dataSEXP, SEXP codeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(test(data));
+    Rcpp::traits::input_parameter< int >::type code(codeSEXP);
+    rcpp_result_gen = Rcpp::wrap(test(data, code));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sortOnFeatureSub
+arma::uvec sortOnFeatureSub(arma::mat data, arma::uvec rowvec, u_int d);
+RcppExport SEXP _cart_sortOnFeatureSub(SEXP dataSEXP, SEXP rowvecSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type rowvec(rowvecSEXP);
+    Rcpp::traits::input_parameter< u_int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(sortOnFeatureSub(data, rowvec, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sortOnFeature
+arma::uvec sortOnFeature(arma::mat data, u_int d);
+RcppExport SEXP _cart_sortOnFeature(SEXP dataSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< u_int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(sortOnFeature(data, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sortDataOnFeature
+arma::mat sortDataOnFeature(arma::mat data, u_int d);
+RcppExport SEXP _cart_sortDataOnFeature(SEXP dataSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< u_int >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(sortDataOnFeature(data, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// timeTree
+arma::mat timeTree(arma::mat data);
+RcppExport SEXP _cart_timeTree(SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(timeTree(data));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -50,7 +99,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cart_test", (DL_FUNC) &_cart_test, 1},
+    {"_cart_test", (DL_FUNC) &_cart_test, 2},
+    {"_cart_sortOnFeatureSub", (DL_FUNC) &_cart_sortOnFeatureSub, 3},
+    {"_cart_sortOnFeature", (DL_FUNC) &_cart_sortOnFeature, 2},
+    {"_cart_sortDataOnFeature", (DL_FUNC) &_cart_sortDataOnFeature, 2},
+    {"_cart_timeTree", (DL_FUNC) &_cart_timeTree, 1},
     {"_cart_testBuildTree", (DL_FUNC) &_cart_testBuildTree, 2},
     {"_cart_sse", (DL_FUNC) &_cart_sse, 3},
     {NULL, NULL, 0}

@@ -6,6 +6,7 @@
 double calculateLeafValue(arma::mat data);
 
 /* getters */
+arma::uvec getLeafRows();
 double getThreshold();
 double getSSE();
 arma::mat getData();
@@ -29,6 +30,7 @@ class Node {
 
         /* fields only defined for leaf nodes */
         double        leafVal;   // value for leaf, if is leaf
+        arma::uvec    leafRows; 
 
     public:
         /* fields only defined for decision nodes */
@@ -37,7 +39,7 @@ class Node {
         bool  isLeaf = false;   // indicator for leaf nodes
         int leftCount, rightCount;
         
-        // constructor for Node
+        // constructor for decision Node
         Node(double threshold, unsigned int column, arma::mat data, 
             arma::uvec leftRows, arma::uvec rightRows) {
                 this->threshold  = threshold;
@@ -48,8 +50,21 @@ class Node {
                 this->leftCount  = leftRows.n_elem;
                 this->rightCount = rightRows.n_elem;
         }
+        // constructor for decision Node that also stores SSE of left/right
+        Node(double threshold, unsigned int column, arma::mat data, 
+            arma::uvec leftRows, arma::uvec rightRows, double nodeSSE) {
+                this->threshold  = threshold;
+                this->column     = column;
+                this->data       = data;
+                this->leftRows   = leftRows;
+                this->rightRows  = rightRows;
+                this->leftCount  = leftRows.n_elem;
+                this->rightCount = rightRows.n_elem;
+                this->nodeSSE    = nodeSSE;
+        }
         // constructor for leaf Node
-        Node(arma::mat data) {
+        Node(arma::mat data, arma::uvec leafRows) {
+            this->leafRows = leafRows;
             this->data = data;
             this->isLeaf = true;
             this->leafVal = calculateLeafValue(data); 
@@ -75,6 +90,9 @@ class Node {
         }
 
         /* ---------------------------- getters ----------------------------  */
+        arma::uvec getLeafRows() {
+            return this->leafRows;
+        }
         u_int getFeature() {
             return this->column;
         }

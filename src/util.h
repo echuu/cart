@@ -17,4 +17,5 @@ double sse(arma::vec x, int n, double xbar) {
 } // end sse() function
 
 
+
 #endif
