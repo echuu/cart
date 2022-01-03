@@ -8,6 +8,31 @@ struct Interval;
 arma::mat createDefaultPartition(arma::mat supp, u_int d, u_int k);
 
 // [[Rcpp::export]]
+void fastTree(arma::mat data, int code) {
+    Tree* tree = new Tree(data, code);
+}
+
+
+// [[Rcpp::export]]
+arma::mat testPartitionMap(arma::mat data, int code) {
+
+    Tree* tree = new Tree(data, code);
+    std::unordered_map<u_int, arma::vec>* pmap = tree->getPartition();
+    
+    u_int nLeaves = tree->getLeaves(); 
+    arma::mat partmat(2 * tree->getNumFeats(), nLeaves, arma::fill::zeros);
+    for (u_int k = 0; k < nLeaves; k++) {
+        arma::vec partvec = (*pmap)[k];
+        // if (k == 0) {
+        //     Rcpp::Rcout << partvec << std::endl;
+        // }
+        partmat.col(k) = partvec;
+    }
+
+    return partmat;
+}
+
+// [[Rcpp::export]]
 arma::mat test(arma::mat data, int code) {
 
     Tree* tree = new Tree(data, code); // this will create the ENTIRE regression tree
@@ -142,31 +167,31 @@ arma::mat sortDataOnFeature(arma::mat data, u_int d) {
 
 
 // [[Rcpp::export]]
-arma::mat timeTree(arma::mat data) {
+void timeTree(arma::mat data, int code) {
 
-    Tree* tree = new Tree(data); // this will create the ENTIRE regression tree
+    Tree* tree = new Tree(data, code); // this will create the ENTIRE regression tree
     // tree->root will give the root node of the tree
-    double rootThresh = tree->root->getThreshold();
+    // double rootThresh = tree->root->getThreshold();
     // Rcpp::Rcout << "Tree has " << tree->getLeaves() << " leaves" << std::endl;
 
-    unsigned int nLeaves = tree->getLeaves();
-    unsigned int d = tree->getNumFeats();
-    unsigned int n = tree->getNumRows();  
-    unsigned int k = 0;
+    // unsigned int nLeaves = tree->getLeaves();
+    // unsigned int d = tree->getNumFeats();
+    // unsigned int n = tree->getNumRows();  
+    // unsigned int k = 0;
 
-    arma::uvec r = arma::conv_to<arma::uvec>::from(arma::linspace(0, n-1, n));
-    arma::uvec c = arma::conv_to<arma::uvec>::from(arma::linspace(1, d, d));
-    arma::mat  X = data.submat(r, c);
-    arma::mat supp = support(X, d); // extract support
-    arma::mat partition = createDefaultPartition(supp, d, nLeaves);
+    // arma::uvec r = arma::conv_to<arma::uvec>::from(arma::linspace(0, n-1, n));
+    // arma::uvec c = arma::conv_to<arma::uvec>::from(arma::linspace(1, d, d));
+    // arma::mat  X = data.submat(r, c);
+    // arma::mat supp = support(X, d); // extract support
+    // arma::mat partition = createDefaultPartition(supp, d, nLeaves);
 
-    std::vector<Interval*> intervalStack; 
-    std::unordered_map<u_int, arma::uvec> leafRowMap;
-    dfs(tree->root, k, intervalStack, partition, supp, leafRowMap);
+    // std::vector<Interval*> intervalStack; 
+    // std::unordered_map<u_int, arma::uvec> leafRowMap;
+    // dfs(tree->root, k, intervalStack, partition, supp, leafRowMap);
     /* after the above call to dfs(), the leafRowmap is fully populated and 
        can be used by the rest of the hybrid algorithm */
     delete(tree);
-    return partition;
+    // return partition;
 }
 
  arma::mat createDefaultPartition(arma::mat supp, u_int d, u_int k) {

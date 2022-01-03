@@ -2,7 +2,7 @@
 #define TREE_H
 
 #include "cart_types.h"
-
+#include "Interval.h"
 #include "util.h"
 #include <cmath>
 #include "Node.h"
@@ -10,6 +10,7 @@
 class Node;
 Node* buildTree(arma::uvec rows);
 Node* fasterBuildTree(arma::uvec rowIds);
+arma::mat initPartition(arma::mat supp, u_int d, u_int k);
 double calculateSSE(arma::uvec rowIndex);
 double calculateRuleSSE(arma::uvec leftRows, arma::uvec rightRows);
 bool isSmallerValue(double val);
@@ -32,6 +33,16 @@ class Tree {
         int nodeMinLimit;
         int minBucket;    // min number of elements in each leaf node
         double cp; 
+
+        /* ---------- partition-related variables ---------- */
+        arma::mat supp;
+        /* replace the role of partition matrix -- the partition matrix just
+           gets converted into the partitionMap in the main approximation code
+           so just create the partitionMap to start with to save conversion */
+        std::unordered_map<u_int, arma::vec>* partitionMap; 
+        std::unordered_map<u_int, arma::uvec>* leafRowMap;
+        std::vector<Interval*>* intervalStack; 
+
 
     public: 
 
@@ -78,13 +89,51 @@ class Tree {
             this->minBucket    = nodeMinLimit / 3;
             this->cp           = 0.01;
 
+            /* initialize variables related to extracting the partition */
+            arma::uvec r = arma::conv_to<arma::uvec>::from(
+                    arma::linspace(0, this->numRows-1, this->numRows));
+            arma::uvec c = arma::conv_to<arma::uvec>::from(
+                    arma::linspace(1, this->numFeats, this->numFeats));
+            arma::mat  X = df.submat(r, c);
+            this->supp = support(X, this->numFeats);
+            // Rcpp::Rcout << supp << std::endl;
+            // this->partition = initPartition(supp, this->numFeats)
+
+            this->partitionMap = new std::unordered_map<u_int, arma::vec>();
+            this->leafRowMap   = new std::unordered_map<u_int, arma::uvec>();
+            this->intervalStack = new std::vector<Interval*>();
+
+
+            /* choose tree building routine: nonzero code is optimized */ 
             if (code == 0) {
                 this->root      = buildTree(this->rowIds);
             } else {
                 this->root      = fasterBuildTree(this->rowIds);
             }
             
-        }
+        } // end Tree constructor
+
+        arma::mat initPartition(arma::mat supp, u_int d, u_int k) {
+            /* 
+                data : matrix w/ response in first column, [y | X]
+                n :    # of data points
+                d :    dimension of features
+                k :    # of leaves
+            */
+            // arma::mat partition(k, 2 * d, arma::fill::zeros);
+            arma::mat partition(2 * d, k, arma::fill::zeros);
+            for (unsigned int i = 0; i < d; i++) {
+                double lb = supp(i, 0);
+                double ub = supp(i, 1);
+                for (unsigned int r = 0; r < k; r++) {
+                    // partition(r, 2 * i) = lb;
+                    // partition(r, 2 * i + 1) = ub;
+                    partition(2 * i, r) = lb;
+                    partition(2 * i + 1, r) = ub;
+                }
+            }
+            return partition;
+        } // end createDefaultPartition() function
 
         arma::uvec getSortedIndex(arma::mat data, arma::uvec rowvec, u_int d) {
             /*  sortOnFeatureSub(): returns the row indices on the scale of the ORIGINAL
@@ -129,10 +178,35 @@ class Tree {
             // double cp = 0.01; // min value of improvement to do a split
             
             // check terminating conditions to break out of recursive calls
-            if (rowIds.n_elem <= this->nodeMinLimit) { // TODO: add in cp check here
-                this->numLeaves++;
+            if (rowIds.n_elem <= this->nodeMinLimit) { 
+                
                 Node* leaf = new Node(this->z.rows(rowIds), rowIds);
                 // Rcpp::Rcout<< "Leaf Node: " << leaf->getLeafVal() << std::endl;
+
+                arma::vec leafInterval(2 * this->numFeats, arma::fill::zeros);
+                /* populate the interval first with the support values */
+                for (u_int i = 0; i < this->numFeats; i++) {
+                    leafInterval(2*i)   = this->supp(i, 0);
+                    leafInterval(2*i+1) = this->supp(i, 1);
+                }
+
+                /* populate the intervals in the partitionMap for this leaf */
+                for (const auto interval : *intervalStack) {
+                    double lb = interval->lb;
+                    double ub = interval->ub;
+                    unsigned int col = interval->feature; 
+                    leafInterval(2*col) = std::max(leafInterval(2*col), lb);
+                    leafInterval(2*col+1) = std::min(leafInterval(2*col+1), ub);
+                }
+
+                // Rcpp::Rcout << leafInterval << std::endl;
+                (*(this->partitionMap))[this->numLeaves] = leafInterval;
+                // delete (*(this->intervalStack)).back();
+                // (*(this->intervalStack)).pop_back();
+
+                (*(this->leafRowMap))[this->numLeaves] = leaf->getLeafRows();
+
+                this->numLeaves++;
                 return leaf; // return pointer to leaf Node
             }
 
@@ -212,7 +286,6 @@ class Tree {
             if (CONDITION_BUCKET || CONDITION_CP) {
                 // check the terminating condition - don't want any
                 // leaf nodes that have fewer than minBucket many points
-                this->numLeaves++;
                 Node* leaf = new Node(this->z.rows(rowIds), rowIds);
                 // if (CONDITION_BUCKET) {
                 //     Rcpp::Rcout<< "hit minbucket condition -> leaf value = " <<
@@ -221,6 +294,37 @@ class Tree {
                 //     Rcpp::Rcout<< "hit cp condition -> leaf value = " <<
                 //         leaf->getLeafVal() << std::endl;
                 // }
+                arma::vec leafInterval(2 * this->numFeats, arma::fill::zeros);
+                /* populate the interval first with the support values */
+                for (u_int i = 0; i < this->numFeats; i++) {
+                    leafInterval(2*i)   = this->supp(i, 0);
+                    leafInterval(2*i+1) = this->supp(i, 1);
+                }
+
+                // if (this->numLeaves == 9) {
+                //     Rcpp::Rcout<< "leaf interval " << leafInterval << std::endl;
+                // }
+
+                /* populate the intervals in the partitionMap for this leaf */
+                for (const auto interval : *intervalStack) {
+                    double lb = interval->lb;
+                    double ub = interval->ub;
+                    unsigned int col = interval->feature; 
+                    // if ((this->numLeaves == 9) && (col == 11)) {
+                    //     Rcpp::Rcout << "interval ub = " << ub << std::endl;
+                    //     Rcpp::Rcout << "value in ub = " << leafInterval(2*col+1) << std::endl;
+                    // }
+                    leafInterval(2*col) = std::max(leafInterval(2*col), lb);
+                    leafInterval(2*col+1) = std::min(leafInterval(2*col+1), ub);
+                }
+                (*(this->partitionMap))[this->numLeaves] = leafInterval;
+                (*(this->leafRowMap))[this->numLeaves] = leaf->getLeafRows();
+
+                // if (this->numLeaves == 9) {
+                //     Rcpp::Rcout<< "leaf interval " << leafInterval << std::endl;
+                // }
+
+                this->numLeaves++;
                 return leaf; // return pointer to leaf Node
             }
 
@@ -235,17 +339,35 @@ class Tree {
             // construct node using optimal value, column, data, left, right
             Node* node = new Node(optThreshold, optFeature, z, optLeft, optRight, minSSE);
 
-
             /* ----------- TODO: add in the interval creation here ---------- */ 
 
+            // obtain feature (this is just the column number)
+            u_int feature = optFeature - 1; 
+            double lb, ub, threshVal; 
+            lb = this->supp(feature, 0);
+            ub = this->supp(feature, 1);
+            Interval* leftInterval = new Interval(lb, optThreshold, feature);
+            Interval* rightInterval = new Interval(optThreshold, ub, feature);
 
             /* ---------------- end interval creation ----------------------- */
 
+            // push left interval onto the interval stack
+            (*(this->intervalStack)).push_back(leftInterval);
             node->left  = fasterBuildTree(optLeft);
+            delete (*(this->intervalStack)).back();
+            (*(this->intervalStack)).pop_back();
+
+            // push right interval onto interval stack
+            (*(this->intervalStack)).push_back(rightInterval);
             node->right = fasterBuildTree(optRight);
+            delete (*(this->intervalStack)).back();
+            (*(this->intervalStack)).pop_back();
 
             return node;
         } // end of fasterBuildTree() function
+
+
+
 
         // arma::uvec buildTree(arma::uvec rowIds) {
         Node* buildTree(arma::uvec rowIds) { 
@@ -305,8 +427,6 @@ class Tree {
                          right splits, we can just group indices together based
                          on relative positions from the proposed split 
                 */
-                
-
 
                 for (u_int n = 0; n < rowIds.n_elem; n++) {
                     u_int n_i = rowIds(n);
@@ -447,8 +567,6 @@ class Tree {
             return (currSSE - (leftSSE + rightSSE)) / this->treeSSE;
         } // end calcSplitCp() function
 
-        
-
 
         double calculateSSE(arma::uvec rowIndex) {
             arma::vec y = this->z.col(0); // response stored in column 0
@@ -520,7 +638,12 @@ class Tree {
         double getSSE() {
             return this->treeSSE;
         }
-
+        std::unordered_map<u_int, arma::vec>* getPartition() {
+            return this->partitionMap;
+        }
+        std::unordered_map<u_int, arma::uvec>* getLeafRowMap() {
+            return this->leafRowMap;
+        }
         /*  ------------------------- setters ------------------------------- */
 
 }; 

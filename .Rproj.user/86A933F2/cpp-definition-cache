@@ -144,7 +144,7 @@
     },
     {
         "file": "C:/Users/ericc/cart/src/Tree.h",
-        "file_last_write": 1641079934.0,
+        "file_last_write": 1641182492.0,
         "definitions": [
             {
                 "usr": "c:@S@Tree",
@@ -152,8 +152,17 @@
                 "parent_name": "",
                 "name": "Tree",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 20,
+                "line": 21,
                 "column": 7
+            },
+            {
+                "usr": "c:@S@Tree@F@initPartition#$@N@arma@S@Mat>#d#i#i#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "initPartition(arma::mat, u_int, u_int)",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 116,
+                "column": 19
             },
             {
                 "usr": "c:@S@Tree@F@getSortedIndex#$@N@arma@S@Mat>#d#$@N@arma@S@Col>#i#i#",
@@ -161,7 +170,7 @@
                 "parent_name": "Tree",
                 "name": "getSortedIndex(arma::mat, arma::uvec, u_int)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 89,
+                "line": 138,
                 "column": 20
             },
             {
@@ -170,7 +179,7 @@
                 "parent_name": "Tree",
                 "name": "fasterBuildTree(arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 110,
+                "line": 159,
                 "column": 15
             },
             {
@@ -179,7 +188,7 @@
                 "parent_name": "Tree",
                 "name": "buildTree(arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 272,
+                "line": 373,
                 "column": 15
             },
             {
@@ -188,7 +197,7 @@
                 "parent_name": "Tree",
                 "name": "calcSplitCp(double, double, double)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 456,
+                "line": 555,
                 "column": 16
             },
             {
@@ -197,7 +206,7 @@
                 "parent_name": "Tree",
                 "name": "calculateSSE(arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 474,
+                "line": 571,
                 "column": 16
             },
             {
@@ -206,7 +215,7 @@
                 "parent_name": "Tree",
                 "name": "calculateRuleSSE(arma::uvec, arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 483,
+                "line": 580,
                 "column": 16
             },
             {
@@ -215,7 +224,7 @@
                 "parent_name": "Tree",
                 "name": "isSmallerValue(double)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 509,
+                "line": 606,
                 "column": 14
             },
             {
@@ -224,7 +233,7 @@
                 "parent_name": "Tree",
                 "name": "dfs(Node *, std::string)",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 514,
+                "line": 611,
                 "column": 14
             },
             {
@@ -233,7 +242,7 @@
                 "parent_name": "Tree",
                 "name": "printTree",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 527,
+                "line": 624,
                 "column": 14
             },
             {
@@ -242,7 +251,7 @@
                 "parent_name": "Tree",
                 "name": "getLeaves",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 532,
+                "line": 629,
                 "column": 13
             },
             {
@@ -251,7 +260,7 @@
                 "parent_name": "Tree",
                 "name": "getNumFeats",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 535,
+                "line": 632,
                 "column": 15
             },
             {
@@ -260,7 +269,7 @@
                 "parent_name": "Tree",
                 "name": "getNumRows",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 538,
+                "line": 635,
                 "column": 15
             },
             {
@@ -269,8 +278,26 @@
                 "parent_name": "Tree",
                 "name": "getSSE",
                 "file": "C:/Users/ericc/cart/src/Tree.h",
-                "line": 541,
+                "line": 638,
                 "column": 16
+            },
+            {
+                "usr": "c:@S@Tree@F@getPartition#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "getPartition",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 641,
+                "column": 47
+            },
+            {
+                "usr": "c:@S@Tree@F@getLeafRowMap#",
+                "kind": 7,
+                "parent_name": "Tree",
+                "name": "getLeafRowMap",
+                "file": "C:/Users/ericc/cart/src/Tree.h",
+                "line": 644,
+                "column": 48
             }
         ]
     },
@@ -291,15 +318,33 @@
     },
     {
         "file": "C:/Users/ericc/cart/src/test.cpp",
-        "file_last_write": 1641074827.0,
+        "file_last_write": 1641182610.0,
         "definitions": [
+            {
+                "usr": "c:@F@fastTree#$@N@arma@S@Mat>#d#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "fastTree(arma::mat, int)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 11,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@testPartitionMap#$@N@arma@S@Mat>#d#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "testPartitionMap(arma::mat, int)",
+                "file": "C:/Users/ericc/cart/src/test.cpp",
+                "line": 17,
+                "column": 11
+            },
             {
                 "usr": "c:@F@test#$@N@arma@S@Mat>#d#I#",
                 "kind": 6,
                 "parent_name": "",
                 "name": "test(arma::mat, int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 11,
+                "line": 36,
                 "column": 11
             },
             {
@@ -308,7 +353,7 @@
                 "parent_name": "",
                 "name": "sortOnFeatureSub(arma::mat, arma::uvec, u_int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 58,
+                "line": 83,
                 "column": 12
             },
             {
@@ -317,7 +362,7 @@
                 "parent_name": "",
                 "name": "sortOnFeature(arma::mat, u_int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 79,
+                "line": 104,
                 "column": 12
             },
             {
@@ -326,17 +371,17 @@
                 "parent_name": "",
                 "name": "sortDataOnFeature(arma::mat, u_int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 95,
+                "line": 120,
                 "column": 11
             },
             {
-                "usr": "c:@F@timeTree#$@N@arma@S@Mat>#d#",
+                "usr": "c:@F@timeTree#$@N@arma@S@Mat>#d#I#",
                 "kind": 6,
                 "parent_name": "",
-                "name": "timeTree(arma::mat)",
+                "name": "timeTree(arma::mat, int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 145,
-                "column": 11
+                "line": 170,
+                "column": 6
             },
             {
                 "usr": "c:@F@createDefaultPartition#$@N@arma@S@Mat>#d#i#i#",
@@ -344,7 +389,7 @@
                 "parent_name": "",
                 "name": "createDefaultPartition(arma::mat, u_int, u_int)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 172,
+                "line": 197,
                 "column": 12
             },
             {
@@ -353,7 +398,7 @@
                 "parent_name": "",
                 "name": "calculateRuleSSE(arma::mat, arma::uvec, arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 196,
+                "line": 221,
                 "column": 8
             },
             {
@@ -362,7 +407,7 @@
                 "parent_name": "",
                 "name": "testBuildTree(arma::mat, arma::uvec)",
                 "file": "C:/Users/ericc/cart/src/test.cpp",
-                "line": 223,
+                "line": 248,
                 "column": 12
             }
         ]
