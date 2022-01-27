@@ -15,12 +15,12 @@ y = X %*% beta + eps # response
 z = cbind(y, X)
 
 ## faster version that uses the rpart optimization
-part_new = f(z, FALSE) # old tree building routine
-part_new = g(z, FALSE) # old tree building routine
+# part_new = f(z, FALSE) # old tree building routine
+part_new = f_partition(z, FALSE) # old tree building routine
 dim(part_new) # (2d x n_leaf)
 
 ## slower version where we sort every iteration:
-part_old = fastTree(z) # old tree building routine
+part_old = old_partition(z) # old tree building routine
 dim(part_old) # (2d x n_leaf)
 
 ## rpart code
@@ -35,10 +35,10 @@ cart_r = function(y, X) {
 
 
 microbenchmark::microbenchmark(
-  cpp_old = fastTree(z),
-  cpp_new = g(z, FALSE),
+  cpp_old = old_build(z),
+  cpp_new = f_build(z, FALSE),
   r       = cart_r(y, X),
-  times = 30
+  times = 50
 )
 
 

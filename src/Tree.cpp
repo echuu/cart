@@ -578,7 +578,6 @@ Node* Tree::fastbuild(u_int nodenum, u_int start, u_int end, arma::uvec rowIds) 
                     splitval = x(i);        // calculated differently in anova.c
                     n_left_best = n_left;   // calculated in nodesplit
                     n_right_best = n_right; // calculated in nodesplit  
-                    
                 } // end if() checking for best improvement so far
             } // end if() checking if left node has enough observations
         } // end loop finding the best improvement for the d-th feature
@@ -619,24 +618,40 @@ Node* Tree::fastbuild(u_int nodenum, u_int start, u_int end, arma::uvec rowIds) 
     u_int leftchild = 2 * nodenum;
     u_int rightchild = leftchild + 1;
 
-    arma::uvec sortedindex = this->featureIndexMap[splitvar]; 
-    // print x in the order of sortedindex; this should be SORTED
-    // Rcpp::Rcout << "splitting value " << splitval << std::endl;
-    // Rcpp::Rcout << "splitting value index " << n_left_best-1 << std::endl;
-    // Rcpp::Rcout << x_star << std::endl; // confirmed that x_star gives X[,d] in ascending order
+    
+
+    arma::uvec leftrows  = arma::conv_to<arma::uvec>::from(
+        arma::linspace(start, 
+                       start + n_left_best - 1, 
+                       n_left_best));
+
+    arma::uvec rightrows = arma::conv_to<arma::uvec>::from(
+        arma::linspace(start + n_left_best, 
+                       start + n_left_best + n_right_best - 1, 
+                       n_right_best));
+
+    arma::uvec left  = (this->featureIndexMap[splitvar]).elem(leftrows);
+    arma::uvec right = (this->featureIndexMap[splitvar]).elem(rightrows);
+
+    // updated method to assign node for each observation
+    for (u_int i = 0; i < left.n_elem; i++) {
+        yloc[left(i)] = leftchild;
+    }
+    for (u_int i = 0; i < right.n_elem; i++) {
+        yloc[right(i)] = rightchild;
+    }
 
     // use original d-th feature to determine where each correspoding observation goes
-    x = (this->z).col(splitvar); 
-    for (u_int i = start; i < end; i++) {
-        j = sortedindex(i);
-        if (x(j) <= splitval) {
-            // Rcpp::Rcout << j << std::endl;
-            yloc[j] = leftchild;
-        } else {
-            yloc[j] = rightchild;
-        }
-    }
-    // Rcpp::Rcout << "split response into left/right nodes" << std::endl;
+    // arma::uvec sortedindex = this->featureIndexMap[splitvar]; 
+    // x = (this->z).col(splitvar); 
+    // for (u_int i = start; i < end; i++) {
+    //     j = sortedindex(i);
+    //     if (x(j) <= splitval) {
+    //         yloc[j] = leftchild;
+    //     } else {
+    //         yloc[j] = rightchild;
+    //     }
+    // }
 
     /* (2) update the featureIndexMap so that within the left/right gorups, 
      * the elements are sorted (see bottom of nodesplit.c)
@@ -647,12 +662,13 @@ Node* Tree::fastbuild(u_int nodenum, u_int start, u_int end, arma::uvec rowIds) 
      * they still give the features in ascending order
      */
     u_int i1, i2;
+    arma::uvec sortedindex;
     for (u_int d = 1; d <= this->numFeats; d++) {
-        // if (d == splitvar) { 
-        //     // don't need to update anything for splitvar since left/right are
-        //     // already sorted based on how the data are partitioned
-        //     continue;
-        // }
+        if (d == splitvar) { 
+            // don't need to update anything for splitvar since left/right are
+            // already sorted based on how the data are partitioned
+            continue;
+        }
         sortedindex = this->featureIndexMap[d]; 
         // initialize temp vector to store the right node indices
         arma::uvec rightnode(this->numRows, arma::fill::zeros); 
@@ -682,20 +698,18 @@ Node* Tree::fastbuild(u_int nodenum, u_int start, u_int end, arma::uvec rowIds) 
 
     } // end outer for iterating over features in the map
 
-    if (false) {
-        // form matrix using featureIndexMap
-        arma::mat leftnodematrix(n_left_best, numFeats, arma::fill::zeros);
-        for (u_int d = 1; d <= numFeats; d++) {
-            sortedindex = this->featureIndexMap[d]; 
-            for (u_int r = 0; r < n_left_best; r++) {
-                leftnodematrix(r, d-1) = sortedindex(r);
-            }
-        }
-        Rcpp::Rcout << leftnodematrix << std::endl;
-        return NULL;
-    }
-
-
+    // if (false) {
+    //     // form matrix using featureIndexMap
+    //     arma::mat leftnodematrix(n_left_best, numFeats, arma::fill::zeros);
+    //     for (u_int d = 1; d <= numFeats; d++) {
+    //         sortedindex = this->featureIndexMap[d]; 
+    //         for (u_int r = 0; r < n_left_best; r++) {
+    //             leftnodematrix(r, d-1) = sortedindex(r);
+    //         }
+    //     }
+    //     Rcpp::Rcout << leftnodematrix << std::endl;
+    //     return NULL;
+    // }
     // Rcpp::Rcout << "updated the sorted feature map" << std::endl;
 
     /* ------------------------- perform the split -------------------------- */ 
@@ -711,19 +725,6 @@ Node* Tree::fastbuild(u_int nodenum, u_int start, u_int end, arma::uvec rowIds) 
     Interval* leftInterval = new Interval(lb, splitval, feature);
     Interval* rightInterval = new Interval(splitval, ub, feature);
     /* ---------------- end interval creation ----------------------- */
-
-    arma::uvec leftrows  = arma::conv_to<arma::uvec>::from(
-        arma::linspace(start, 
-                       start + n_left_best - 1, 
-                       n_left_best));
-
-    arma::uvec rightrows = arma::conv_to<arma::uvec>::from(
-        arma::linspace(start + n_left_best, 
-                       start + n_left_best + n_right_best - 1, 
-                       n_right_best));
-
-    arma::uvec left  = (this->featureIndexMap[splitvar]).elem(leftrows);
-    arma::uvec right = (this->featureIndexMap[splitvar]).elem(rightrows);
 
     /* recursive call on left node */ 
     // push left interval onto the interval stack
